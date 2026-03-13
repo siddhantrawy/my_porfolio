@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Siddhant Rawy — Performance Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #050810;
+    --bg2:      #0b0f1a;
+    --bg3:      #111827;
+    --cyan:     #00e5ff;
+    --green:    #1eff8e;
+    --amber:    #ffb700;
+    --red:      #ff4757;
+    --text:     #e8edf5;
+    --muted:    #7a8499;
+    --border:   rgba(0,229,255,0.12);
+    --glow:     0 0 24px rgba(0,229,255,0.3);
+    --glow-sm:  0 0 10px rgba(0,229,255,0.2);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── Scanline overlay ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,255,0.012) 2px,
+      rgba(0,229,255,0.012) 4px
+    );
+  }
+
+  /* ─── Grid noise bg ─── */
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 40%, transparent 100%);
+  }
+
+  /* ─── Nav ─── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    padding: 18px 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(5,8,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem; font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+  }
+
+  .nav-logo span { color: var(--green); }
+
+  nav ul {
+    display: flex; gap: 32px; list-style: none;
+  }
+
+  nav ul a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  nav ul a:hover { color: var(--cyan); }
+
+  /* ─── Hero ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 120px 5% 80px;
+    position: relative;
+  }
+
+  .hero-inner { position: relative; z-index: 1; max-width: 900px; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; font-weight: 600;
+    color: var(--green);
+    border: 1px solid rgba(30,255,142,0.25);
+    padding: 6px 14px; border-radius: 4px;
+    margin-bottom: 28px;
+    background: rgba(30,255,142,0.06);
+    letter-spacing: 0.12em;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  h1.hero-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  h1.hero-name .first { color: var(--text); }
+  h1.hero-name .last  { color: var(--cyan); text-shadow: var(--glow); }
+
+  .hero-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+    font-weight: 400;
+    color: var(--muted);
+    margin-bottom: 24px;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-role .highlight { color: var(--amber); }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: #9fafc4;
+    max-width: 580px;
+    margin-bottom: 44px;
+    line-height: 1.75;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--bg);
+    background: var(--cyan);
+    padding: 14px 28px; border-radius: 4px;
+    text-decoration: none;
+    transition: box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 0 0 rgba(0,229,255,0);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 30px rgba(0,229,255,0.5);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--cyan);
+    background: transparent;
+    padding: 13px 28px; border-radius: 4px;
+    border: 1px solid rgba(0,229,255,0.4);
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .btn-outline:hover {
+    background: rgba(0,229,255,0.07);
+    border-color: var(--cyan);
+  }
+
+  /* ─── Metrics strip ─── */
+  .metrics-strip {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 64px;
+    max-width: 720px;
+  }
+
+  .metric {
+    background: var(--bg2);
+    padding: 20px 24px;
+    position: relative;
+  }
+
+  .metric-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem; font-weight: 800;
+    color: var(--cyan);
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .metric-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+  }
+
+  /* ─── Hero floating terminal ─── */
+  .hero-terminal {
+    position: absolute;
+    right: 5%; top: 50%;
+    transform: translateY(-50%);
+    width: 340px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6), var(--glow);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    display: none;
+  }
+
+  @media (min-width: 1100px) { .hero-terminal { display: block; } }
+
+  .terminal-bar {
+    background: #1a1f2e;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #ffbd2e; }
+  .dot.g { background: #28c840; }
+
+  .terminal-title {
+    font-size: 0.65rem; color: var(--muted);
+    margin-left: 6px; letter-spacing: 0.06em;
+  }
+
+  .terminal-body { padding: 16px; line-height: 1.9; }
+
+  .t-prompt { color: var(--green); }
+  .t-cmd    { color: var(--text); }
+  .t-out    { color: var(--muted); margin-left: 14px; }
+  .t-val    { color: var(--cyan); }
+  .t-ok     { color: var(--green); }
+  .t-warn   { color: var(--amber); }
+
+  .cursor {
+    display: inline-block; width: 7px; height: 13px;
+    background: var(--cyan); vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ─── Sections ─── */
+  section { padding: 100px 5%; position: relative; z-index: 1; }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1; max-width: 48px;
+    height: 1px; background: var(--cyan);
+    opacity: 0.4;
+  }
+
+  h2.section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+    color: var(--text);
+  }
+
+  h2.section-title em { color: var(--cyan); font-style: normal; }
+
+  /* ─── About ─── */
+  #about { background: var(--bg2); }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .about-text p {
+    color: #9fafc4;
+    margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
+
+  .about-text p strong { color: var(--text); }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  .info-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+
+  .info-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .info-val {
+    font-size: 0.88rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* AI card */
+  .ai-card {
+    background: linear-gradient(135deg, rgba(0,229,255,0.07) 0%, rgba(30,255,142,0.04) 100%);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 10px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-card::before {
+    content: 'AI';
+    position: absolute; right: -10px; top: -20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7rem; font-weight: 800;
+    color: rgba(0,229,255,0.04);
+    user-select: none;
+  }
+
+  .ai-card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem; font-weight: 700;
+    color: var(--cyan); margin-bottom: 16px;
+  }
+
+  .ai-card ul { list-style: none; }
+  .ai-card ul li {
+    color: #9fafc4; font-size: 0.9rem;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .ai-card ul li::before { content: '▸'; color: var(--green); flex-shrink: 0; }
+
+  /* ─── Skills ─── */
+  #skills { background: var(--bg); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .skill-category {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .skill-category:hover {
+    border-color: rgba(0,229,255,0.3);
+    box-shadow: var(--glow-sm);
+  }
+
+  .skill-cat-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; font-weight: 700;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .skill-cat-title .icon { font-size: 1rem; }
+
+  .skill-bar-wrap { margin-bottom: 14px; }
+
+  .skill-bar-top {
+    display: flex; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .skill-name {
+    font-size: 0.82rem; font-weight: 500;
+    color: var(--text);
+  }
+
+  .skill-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; color: var(--muted);
+  }
+
+  .bar-bg {
+    height: 4px; background: rgba(255,255,255,0.07);
+    border-radius: 2px; overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 8px rgba(0,229,255,0.5);
+  }
+
+  /* tag pills */
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.67rem; font-weight: 600;
+    padding: 5px 10px; border-radius: 3px;
+    background: rgba(0,229,255,0.07);
+    color: var(--cyan);
+    border: 1px solid rgba(0,229,255,0.15);
+    letter-spacing: 0.04em;
+  }
+
+  .tag.green {
+    background: rgba(30,255,142,0.07);
+    color: var(--green);
+    border-color: rgba(30,255,142,0.15);
+  }
+
+  .tag.amber {
+    background: rgba(255,183,0,0.07);
+    color: var(--amber);
+    border-color: rgba(255,183,0,0.15);
+  }
+
+  /* ─── Experience ─── */
+  #experience { background: var(--bg2); }
+
+  .timeline { position: relative; padding-left: 32px; }
+
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 8px; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--cyan) 0%, transparent 100%);
+    opacity: 0.3;
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .tl-item.visible { opacity: 1; transform: translateX(0); }
+
+  .tl-dot {
+    position: absolute; left: -37px; top: 4px;
+    width: 12px; height: 12px;
+    background: var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--cyan);
+  }
+
+  .tl-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .tl-meta .company { color: var(--cyan); font-weight: 700; }
+
+  .tl-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.15rem; font-weight: 800;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .tl-content {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+
+  .tl-content ul { list-style: none; }
+  .tl-content ul li {
+    color: #9fafc4; font-size: 0.9rem;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; gap: 10px;
+    line-height: 1.65;
+  }
+
+  .tl-content ul li::before { content: '//'; color: var(--cyan); opacity: 0.5; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; margin-top: 2px; }
+
+  .tl-content ul li:last-child { border-bottom: none; }
+
+  .achievement-band {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin-top: 20px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .achievement {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,183,0,0.07);
+    border: 1px solid rgba(255,183,0,0.2);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    color: var(--amber);
+    font-weight: 500;
+  }
+
+  /* ─── Certifications ─── */
+  #certifications { background: var(--bg); }
+
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .cert-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 22px;
+    display: flex; align-items: flex-start; gap: 14px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .cert-card:hover {
+    border-color: rgba(0,229,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .cert-icon {
+    width: 36px; height: 36px;
+    background: rgba(0,229,255,0.1);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+
+  .cert-name {
+    font-size: 0.88rem; font-weight: 600;
+    color: var(--text); margin-bottom: 4px;
+    line-height: 1.35;
+  }
+
+  .cert-org {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ─── Contact ─── */
+  #contact {
+    background: var(--bg2);
+    text-align: center;
+  }
+
+  .contact-inner { max-width: 600px; margin: 0 auto; }
+
+  .contact-inner p {
+    color: #9fafc4;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 36px;
+  }
+
+  .contact-links {
+    display: flex; justify-content: center;
+    flex-wrap: wrap; gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .contact-link {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem; font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 20px;
+    letter-spacing: 0.04em;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+
+  .contact-link:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: var(--glow-sm);
+  }
+
+  /* ─── Footer ─── */
+  footer {
+    padding: 28px 5%;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+    position: relative; z-index: 1;
+  }
+
+  .footer-copy {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .footer-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; color: var(--green);
+    border: 1px solid rgba(30,255,142,0.2);
+    padding: 4px 10px; border-radius: 3px;
+  }
+
+  /* ─── Scroll reveal ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── Responsive nav ─── */
+  @media (max-width: 600px) {
+    nav ul { gap: 16px; }
+    nav ul a { font-size: 0.65rem; }
+    .hero-ctas { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo">SR<span>.</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#certifications">Certs</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">AVAILABLE FOR OPPORTUNITIES</div>
+
+    <h1 class="hero-name">
+      <span class="first">Siddhant </span><span class="last">Rawy</span>
+    </h1>
+
+    <p class="hero-role">
+      Performance Test Engineer &nbsp;·&nbsp;
+      <span class="highlight">4 Years @ Infosys</span> &nbsp;·&nbsp; Healthcare Domain
+    </p>
+
+    <p class="hero-desc">
+      I break systems <em>before</em> your users do. Specializing in UI, API, and Batch 
+      performance testing for enterprise healthcare applications — using LoadRunner, 
+      JMeter, and AI-augmented workflows to find bottlenecks that matter.
+    </p>
+
+    <div class="hero-ctas">
+      <a href="mailto:siddhantrawy@gmail.com" class="btn-primary">Get in Touch</a>
+      <a href="https://www.linkedin.com/in/siddhant-rawy-305838206" target="_blank" class="btn-outline">LinkedIn ↗</a>
+    </div>
+
+    <div class="metrics-strip">
+      <div class="metric">
+        <span class="metric-val" data-count="4">0</span>
+        <span class="metric-label">Years Experience</span>
+      </div>
+      <div class="metric">
+        <span class="metric-val" data-count="6">0</span>
+        <span class="metric-label">Certs Earned</span>
+      </div>
+      <div class="metric">
+        <span class="metric-val" data-count="15">0</span>
+        <span class="metric-label">Tools Mastered</span>
+      </div>
+      <div class="metric">
+        <span class="metric-val" data-count="3">0</span>
+        <span class="metric-label">Awards Won</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating terminal -->
+  <div class="hero-terminal">
+    <div class="terminal-bar">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+      <span class="terminal-title">perf-test — jmeter</span>
+    </div>
+    <div class="terminal-body">
+      <div><span class="t-prompt">❯</span> <span class="t-cmd">run_load_test --vusers 500</span></div>
+      <div class="t-out">Initializing thread groups...</div>
+      <div class="t-out"><span class="t-ok">✔</span> Ramp-up: <span class="t-val">60s</span></div>
+      <div class="t-out"><span class="t-ok">✔</span> Peak load: <span class="t-val">500 VUs</span></div>
+      <div class="t-out">Running test... <span class="t-val">02:15</span> elapsed</div>
+      <div class="t-out">─────────────────────</div>
+      <div class="t-out">Avg Response: <span class="t-val">412ms</span></div>
+      <div class="t-out">95th %tile:   <span class="t-val">1.08s</span></div>
+      <div class="t-out">Throughput:   <span class="t-val">342 req/s</span></div>
+      <div class="t-out">Error Rate:   <span class="t-ok">0.12%</span></div>
+      <div class="t-out">─────────────────────</div>
+      <div class="t-out"><span class="t-warn">⚠</span>  Bottleneck @ <span class="t-val">DB layer</span></div>
+      <div class="t-out"><span class="t-ok">✔</span> Report generated</div>
+      <div><span class="t-prompt">❯</span> <span class="cursor"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ABOUT ─── -->
+<section id="about">
+  <div class="section-label">01 / About</div>
+  <h2 class="section-title">Who I <em>Am</em></h2>
+
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>
+        I'm a <strong>Performance Test Engineer</strong> with 4 years of hands-on experience 
+        at Infosys, working on enterprise-grade healthcare applications that millions depend on.
+      </p>
+      <p>
+        My work spans the full performance testing lifecycle — from <strong>requirement analysis 
+        and workload modeling</strong> through scripting, execution, and deep root-cause analysis. 
+        I've designed and run load, stress, volume, endurance, canary, and autoscaling tests in 
+        production-mirrored environments.
+      </p>
+      <p>
+        I integrate <strong>AI tools professionally</strong> into my testing workflows — from 
+        intelligent anomaly detection and auto-analysis of Splunk dashboards to AI-assisted 
+        script generation and report summarization, cutting test cycle time significantly.
+      </p>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-key">Location</div>
+          <div class="info-val">Bhubaneswar, Odisha</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">Domain</div>
+          <div class="info-val">Healthcare Enterprise</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">Email</div>
+          <div class="info-val">siddhantrawy@gmail.com</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">Degree</div>
+          <div class="info-val">B.Tech Mechanical, 82%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-card reveal" style="transition-delay:0.15s">
+      <h3>// AI-Augmented Testing</h3>
+      <ul>
+        <li>Prompt-engineering for automated test scenario generation and script scaffolding</li>
+        <li>AI-assisted root-cause analysis on Splunk AppDynamics anomaly reports</li>
+        <li>LLM-powered performance report summarization and bottleneck narration</li>
+        <li>Using AI to accelerate correlation rule discovery in LoadRunner VuGen</li>
+        <li>Intelligent threshold alerting via AI-integrated Grafana dashboards</li>
+        <li>Continuous learning on emerging AI testing frameworks (Gatling + AI agents)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SKILLS ─── -->
+<section id="skills">
+  <div class="section-label">02 / Skills</div>
+  <h2 class="section-title">Technical <em>Arsenal</em></h2>
+
+  <div class="skills-grid">
+
+    <div class="skill-category reveal">
+      <div class="skill-cat-title"><span class="icon">⚡</span>Performance Testing</div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-top"><span class="skill-name">LoadRunner Enterprise</span><span class="skill-pct">95%</span></div>
+        <div class="bar-bg"><div class="bar-fill" data-width="95"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-top"><span class="skill-name">LoadRunner VuGen</span><span class="skill-pct">95%</span></div>
+        <div class="bar-bg"><div class="bar-fill" data-width="95"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-top"><span class="skill-name">JMeter</span><span class="skill-pct">92%</span></div>
+        <div class="bar-bg"><div class="bar-fill" data-width="92"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-top"><span class="skill-name">Workload Modelling</span><span class="skill-pct">90%</span></div>
+        <div class="bar-bg"><div class="bar-fill" data-width="90"></div></div>
+      </div>
+    </div>
+
+    <div class="skill-category reveal" style="transition-delay:0.1s">
+      <div class="skill-cat-title"><span class="icon">📡</span>Monitoring & Observability</div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-top"><span class="skill-name">Splunk AppDynamics</span><span class="skill-pct">88%</span></div>
+        <div class="bar-bg"><div class="bar-fill" data-width="88"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-top"><span class="skill-name">Splunk Observability</span><span class="skill-pct">85%</span></div>
+        <div class="bar-bg"><div class="bar-fill" data-width="85"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-top"><span class="skill-name">Grafana / InfluxDB</span><span class="skill-pct">82%</span></div>
+        <div class="bar-bg"><div class="bar-fill" data-width="82"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-top"><span class="skill-name">Dynatrace</span><span class="skill-pct">78%</span></div>
+        <div class="bar-bg"><div class="bar-fill" data-width="78"></div></div>
+      </div>
+    </div>
+
+    <div class="skill-category reveal" style="transition-delay:0.2s">
+      <div class="skill-cat-title"><span class="icon">🔌</span>API & Integration Testing</div>
+      <div class="tag-cloud">
+        <span class="tag">Postman</span>
+        <span class="tag">SoapUI</span>
+        <span class="tag">Insomnia</span>
+        <span class="tag">Swagger</span>
+        <span class="tag">REST</span>
+        <span class="tag">SOAP</span>
+        <span class="tag">JDBC</span>
+        <span class="tag">HTTP/HTTPS</span>
+      </div>
+      <br>
+      <div class="skill-cat-title" style="margin-bottom:12px"><span class="icon">🗄️</span>Databases</div>
+      <div class="tag-cloud">
+        <span class="tag green">SQL Server</span>
+        <span class="tag green">MySQL</span>
+        <span class="tag green">InfluxDB</span>
+      </div>
+    </div>
+
+    <div class="skill-category reveal" style="transition-delay:0.3s">
+      <div class="skill-cat-title"><span class="icon">💻</span>Dev & Scripting</div>
+      <div class="tag-cloud">
+        <span class="tag amber">Groovy</span>
+        <span class="tag amber">BeanShell</span>
+        <span class="tag amber">Python</span>
+        <span class="tag amber">Java</span>
+        <span class="tag amber">C / C++</span>
+        <span class="tag amber">SQL</span>
+      </div>
+      <br>
+      <div class="skill-cat-title" style="margin-bottom:12px"><span class="icon">🛠️</span>DevOps & Automation</div>
+      <div class="tag-cloud">
+        <span class="tag">Git</span>
+        <span class="tag">Jenkins</span>
+        <span class="tag">Autosys</span>
+        <span class="tag">Linux</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── EXPERIENCE ─── -->
+<section id="experience">
+  <div class="section-label">03 / Experience</div>
+  <h2 class="section-title">Where I've <em>Made Impact</em></h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-meta">
+        <span class="company">Infosys Ltd.</span> &nbsp;·&nbsp; Aug 2022 – Present &nbsp;·&nbsp; Bhubaneswar
+      </div>
+      <div class="tl-title">Performance Test Engineer</div>
+      <div class="tl-content">
+        <ul>
+          <li>Owned end-to-end Performance Testing Life Cycle — from SLA gathering and workload modeling through scripting, execution, and reporting for enterprise healthcare applications.</li>
+          <li>Developed and maintained virtual user scripts in LoadRunner VuGen using Web (HTTP/HTML) and TruClient protocols, applying parameterization, correlation, and validation checks for robustness.</li>
+          <li>Designed realistic workload models from production traffic patterns; defined and executed load, stress, volume, endurance, canary, and autoscaling test scenarios.</li>
+          <li>Built reusable JMeter test plans with Thread Groups, Samplers, Controllers, Assertions, and Listeners; implemented pacing and think-time for production-accurate simulations.</li>
+          <li>Configured distributed JMeter testing to scale load generation across multiple machines for high-concurrency requirements.</li>
+          <li>Conducted batch job performance testing via Autosys, analyzing job execution times and resource utilization patterns across critical healthcare workflows.</li>
+          <li>Leveraged Splunk AppDynamics and Splunk Observability to trace CPU/memory spikes, pod behaviors, and identify code-level bottlenecks under peak load.</li>
+          <li>Integrated Grafana/Prometheus dashboards with JMeter output for real-time metric correlation and trend visualization.</li>
+          <li>Worked extensively with SQL Server for test data preparation, validation, and extraction; wrote complex queries to support scenario design.</li>
+          <li>Authored detailed performance test summary reports with findings, bottleneck analysis, and actionable recommendations validated by architecture teams.</li>
+          <li>Contributed to API functional testing using Postman, Insomnia, and SoapUI, ensuring accuracy and reliability across REST and SOAP endpoints.</li>
+          <li>Integrated Git and Jenkins for test version control and scheduled CI performance runs, reducing manual test execution overhead.</li>
+        </ul>
+
+        <div class="achievement-band">
+          <div class="achievement">🏆 Rising Insta Award — High Impact Contributor</div>
+          <div class="achievement">🚀 Performance Impact Award — Throughput Optimization</div>
+          <div class="achievement">🎓 Certification Distinction — LoadRunner, JMeter, Perf Eng</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CERTIFICATIONS ─── -->
+<section id="certifications">
+  <div class="section-label">04 / Certifications</div>
+  <h2 class="section-title">Validated <em>Expertise</em></h2>
+
+  <div class="cert-grid">
+    <div class="cert-card reveal">
+      <div class="cert-icon">⚡</div>
+      <div>
+        <div class="cert-name">LoadRunner Performance Testing</div>
+        <div class="cert-org">INFOSYS INTERNAL · ISHA TRAINING SOLUTION</div>
+      </div>
+    </div>
+    <div class="cert-card reveal" style="transition-delay:0.08s">
+      <div class="cert-icon">🔥</div>
+      <div>
+        <div class="cert-name">JMeter Performance Testing</div>
+        <div class="cert-org">INFOSYS INTERNAL · ISHA TRAINING SOLUTION</div>
+      </div>
+    </div>
+    <div class="cert-card reveal" style="transition-delay:0.16s">
+      <div class="cert-icon">🔌</div>
+      <div>
+        <div class="cert-name">API Testing with Postman</div>
+        <div class="cert-org">UDEMY</div>
+      </div>
+    </div>
+    <div class="cert-card reveal" style="transition-delay:0.24s">
+      <div class="cert-icon">📐</div>
+      <div>
+        <div class="cert-name">Performance Engineering Fundamentals</div>
+        <div class="cert-org">INFOSYS INTERNAL</div>
+      </div>
+    </div>
+    <div class="cert-card reveal" style="transition-delay:0.32s">
+      <div class="cert-icon">💻</div>
+      <div>
+        <div class="cert-name">C & C++ with Data Structures & Algorithms</div>
+        <div class="cert-org">MYSIRG.COM</div>
+      </div>
+    </div>
+    <div class="cert-card reveal" style="transition-delay:0.4s">
+      <div class="cert-icon">☕</div>
+      <div>
+        <div class="cert-name">Java Basic Programming</div>
+        <div class="cert-org">MYSIRG.COM</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ─── -->
+<section id="contact">
+  <div class="section-label" style="justify-content:center">05 / Contact</div>
+  <h2 class="section-title" style="text-align:center">Let's <em>Connect</em></h2>
+
+  <div class="contact-inner">
+    <p>
+      Whether you're looking for a seasoned performance engineer, want to discuss 
+      AI-augmented testing strategies, or just want to geek out over bottleneck 
+      analysis — my inbox is always open.
+    </p>
+
+    <div class="contact-links">
+      <a href="mailto:siddhantrawy@gmail.com" class="contact-link">
+        <span>✉</span> siddhantrawy@gmail.com
+      </a>
+      <a href="https://www.linkedin.com/in/siddhant-rawy-305838206" target="_blank" class="contact-link">
+        <span>in</span> LinkedIn Profile
+      </a>
+      <a href="tel:+917808991884" class="contact-link">
+        <span>📞</span> +91-7808991884
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-copy">© 2025 Siddhant Rawy &nbsp;·&nbsp; Built for GitHub Pages</div>
+  <div class="footer-badge">// PERFORMANCE ENGINEER</div>
+</footer>
+
+<script>
+// ─── Counter animation ───
+function animateCount(el) {
+  const target = +el.getAttribute('data-count');
+  const suffix = el.textContent.includes('+') ? '+' : '';
+  let start = 0;
+  const duration = 1500;
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(ease * target) + (progress === 1 ? '+' : '');
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target + '+';
+  };
+  requestAnimationFrame(step);
+}
+
+// ─── Intersection observer ───
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+
+    if (el.classList.contains('reveal') || el.classList.contains('tl-item')) {
+      el.classList.add('visible');
+    }
+
+    if (el.classList.contains('metrics-strip')) {
+      el.querySelectorAll('[data-count]').forEach(animateCount);
+    }
+
+    el.querySelectorAll('.bar-fill').forEach(bar => {
+      setTimeout(() => { bar.style.width = bar.getAttribute('data-width') + '%'; }, 200);
+    });
+
+    io.unobserve(el);
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal, .tl-item, .metrics-strip, .skill-category').forEach(el => io.observe(el));
+
+// Trigger bars inside already-visible skill categories on page load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.bar-fill').forEach(bar => {
+    const cat = bar.closest('.skill-category');
+    if (cat) io.observe(cat);
+  });
+});
+</script>
+</body>
+</html>
